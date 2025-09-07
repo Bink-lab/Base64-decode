@@ -1,4 +1,3 @@
-// Background service worker: create context menu and decode selection
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "decode-base64",
@@ -28,11 +27,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     const sel = info.selectionText.trim();
     const res = decodeBase64ToUtf8(sel);
     if (res.error) {
-      // open a small tab showing error
       chrome.tabs.create({url: 'data:text/html;charset=utf-8,' + encodeURIComponent('<pre>Invalid Base64 selection</pre>')});
       return;
     }
-    // Prepare HTML to show result and allow download
     let body;
     if (res.text !== null) {
       body = '<h1>Decoded (UTF-8 text)</h1><pre>' + escapeHtml(res.text) + '</pre>';
@@ -48,7 +45,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 function escapeHtml(str) {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/&/g, '&')
+    .replace(/</g, '<')
+    .replace(/>/g, '>');
 }

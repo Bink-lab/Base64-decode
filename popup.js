@@ -1,12 +1,9 @@
 function tryDecodeBase64(b64) {
   try {
-    // atob -> bytes -> UTF-8 text if possible
     const binary = atob(b64.replace(/\s+/g, ''));
-    // convert binary string to Uint8Array
     const len = binary.length;
     const bytes = new Uint8Array(len);
     for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
-    // try decode as utf-8 text
     try {
       const txt = new TextDecoder('utf-8').decode(bytes);
       return {text: txt, bytes};
@@ -29,7 +26,6 @@ document.getElementById('decode').addEventListener('click', () => {
       outEl.value = res.text;
       msg.textContent = 'Decoded as UTF-8 text. Showing text.';
     } else {
-      // show hex preview if not text
       outEl.value = Array.from(res.bytes).map(b => ('0'+b.toString(16)).slice(-2)).join(' ');
       msg.textContent = 'Decoded binary (not valid UTF-8). Showing hex bytes.';
     }
@@ -56,7 +52,6 @@ document.getElementById('download').addEventListener('click', () => {
   const type = document.getElementById('filetype').value;
   let blob;
   if (type === 'bin') {
-    // if hex bytes, convert back to bytes
     const hexs = out.split(/\s+/).filter(x=>x);
     const arr = new Uint8Array(hexs.map(h=>parseInt(h,16)));
     blob = new Blob([arr], {type:'application/octet-stream'});
@@ -87,7 +82,6 @@ document.getElementById('paste').addEventListener('click', async () => {
   }
 });
 
-// If popup opened after context menu click, try to get lastSelection via runtime message
 chrome.runtime.onMessage.addListener((msg, sender, sendResp) => {
   if (msg.type === 'selection') {
     document.getElementById('input').value = msg.selection || '';

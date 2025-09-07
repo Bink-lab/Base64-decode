@@ -11,7 +11,6 @@ function tryDecodeBase64(b64) {
     }
     const text = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
 
-    // Only allow printable characters
     if (/^[\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]*$/.test(text)) {
       return text;
     }
@@ -35,7 +34,6 @@ function walkAndDecode(node) {
         const decoded = tryDecodeBase64(p);
         if (decoded) {
           if (isUrl(decoded)) {
-            // Create clickable link
             const a = document.createElement("a");
             a.href = decoded.startsWith("http") ? decoded : "http://" + decoded;
             a.textContent = decoded;
@@ -68,10 +66,8 @@ function walkAndDecode(node) {
   }
 }
 
-// Run once on load
 walkAndDecode(document.body);
 
-// Observe future changes
 const observer = new MutationObserver(mutations => {
   for (const mutation of mutations) {
     for (const node of mutation.addedNodes) {
